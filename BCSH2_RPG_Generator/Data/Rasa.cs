@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BCSH2_RPG_Generator.Data
+{
+    public class Rasa
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Nazev { get; set; }
+        public string Popis { get; set; }
+        public string? Obrazek { get; set; }
+
+        public Rasa() { }
+        public Rasa(string nazev, string popis, string? obrazek = null)
+        {
+            Nazev = nazev;
+            Popis = popis;
+            Obrazek = obrazek;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Rasa rasa && rasa.Nazev == Nazev;
+        }
+
+        public override int GetHashCode()
+        {
+            return Nazev.GetHashCode();
+        }
+    }
+
+}
