@@ -3,67 +3,39 @@ using BCSH2_RPG_Generator.Spravce;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
-    public class SpravaHerViewModel : INotifyPropertyChanged
+    public partial class SpravaHerViewModel : ObservableObject
     {
         private readonly SpravceVseho spravce;
 
+        [ObservableProperty]
         private Hra? vybranaHra;
+
+        [ObservableProperty]
         private string? novyNazev;
+
+        [ObservableProperty]
         private string? novyPopis;
 
+        [ObservableProperty]
         private bool rezimPridani;
+
+        [ObservableProperty]
         private bool isGridEnabled = true;
 
-        public ObservableCollection<Hra> Hry { get; set; }
+        public ObservableCollection<Hra> Hry { get; }
 
-        public Hra? VybranaHra
-        {
-            get => vybranaHra;
-            set
-            {
-                vybranaHra = value;
-                if (!rezimPridani)
-                {
-                    if (value != null)
-                    {
-                        NovyNazev = value.Nazev;
-                        NovyPopis = value.Popis;
-                    }
-                    else
-                    {
-                        NovyNazev = NovyPopis;
-                    }
-                }
-                OnPropertyChanged();
-                AktualizovatStavyTlacitek();
-            }
-        }
-
-        public string? NovyNazev { get => novyNazev; set { novyNazev = value; OnPropertyChanged(); } }
-        public string? NovyPopis { get => novyPopis; set { novyPopis = value; OnPropertyChanged(); } }
-
-        public bool IsGridEnabled { get => isGridEnabled; set { isGridEnabled = value; OnPropertyChanged(); } }
         public string TextTlacitkoNova => rezimPridani ? "Přidat" : "Nová";
         public string TextTlacitkoSmazat => rezimPridani ? "Zrušit" : "Smazat";
         public bool MuzeUlozit => !rezimPridani && VybranaHra != null;
         public bool MuzeZpet => !rezimPridani;
-
-        public ICommand NovaNeboPridatCommand { get; }
-        public ICommand SmazatNeboZrusitCommand { get; }
-        public ICommand UlozitCommand { get; }
-        public ICommand VybratCestuCommand { get; }
-        public ICommand ZpetCommand { get; }
-
-        public ICommand OtevritSlozkuCommand { get; }
 
         public SpravaHerViewModel()
         {
@@ -72,18 +44,29 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             Hry = new ObservableCollection<Hra>(spravce.GetHry());
 
-            NovaNeboPridatCommand = new RelayCommand(_ => NovaNeboPridat());
-            SmazatNeboZrusitCommand = new RelayCommand(_ => SmazatNeboZrusit(), _ => rezimPridani || VybranaHra != null);
-            UlozitCommand = new RelayCommand(_ => UlozitZmeny(), _ => MuzeUlozit);
-            VybratCestuCommand = new RelayCommand(_ => VyberCestu());
-            ZpetCommand = new RelayCommand(_ => ZavritOkno(), _ => MuzeZpet);
-            OtevritSlozkuCommand = new RelayCommand(_ => OtevritHru());
-
             if (Hry.Count > 0)
                 VybranaHra = Hry[0];
         }
 
-        private void OtevritHru()
+        partial void OnVybranaHraChanged(Hra? value)
+        {
+            if (!rezimPridani)
+            {
+                if (value != null)
+                {
+                    NovyNazev = value.Nazev;
+                    NovyPopis = value.Popis;
+                }
+                else
+                {
+                    NovyNazev = NovyPopis = "";
+                }
+            }
+            AktualizovatStavyTlacitek();
+        }
+
+        [RelayCommand]
+        private void OtevritSlozku()
         {
             if (VybranaHra == null) return;
 
@@ -101,6 +84,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             okno.Show();
         }
 
+        [RelayCommand]
         private void NovaNeboPridat()
         {
             if (!rezimPridani)
@@ -141,6 +125,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             MessageBox.Show("Hra přidána!", "Hotovo");
         }
 
+        [RelayCommand(CanExecute = nameof(CanSmazatNeboZrusit))]
         private void SmazatNeboZrusit()
         {
             if (rezimPridani)
@@ -164,8 +149,10 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             VybranaHra = Hry.FirstOrDefault();
         }
+        private bool CanSmazatNeboZrusit() => rezimPridani || VybranaHra != null;
 
-        private void UlozitZmeny()
+        [RelayCommand(CanExecute = nameof(MuzeUlozit))]
+        private void Ulozit()
         {
             if (VybranaHra == null) return;
 
@@ -194,7 +181,8 @@ namespace BCSH2_RPG_Generator.ViewModels
             MessageBox.Show("Změny byly uloženy.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void VyberCestu()
+        [RelayCommand]
+        private void VybratCestu()
         {
             var ofd = new OpenFileDialog
             {
@@ -210,7 +198,8 @@ namespace BCSH2_RPG_Generator.ViewModels
             }
         }
 
-        private void ZavritOkno()
+        [RelayCommand(CanExecute = nameof(MuzeZpet))]
+        private void Zpet()
         {
             if (rezimPridani)
             {
@@ -247,13 +236,9 @@ namespace BCSH2_RPG_Generator.ViewModels
             OnPropertyChanged(nameof(MuzeZpet));
             OnPropertyChanged(nameof(IsGridEnabled));
 
-            (SmazatNeboZrusitCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (UlozitCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (ZpetCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            SmazatNeboZrusitCommand.NotifyCanExecuteChanged();
+            UlozitCommand.NotifyCanExecuteChanged();
+            ZpetCommand.NotifyCanExecuteChanged();
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

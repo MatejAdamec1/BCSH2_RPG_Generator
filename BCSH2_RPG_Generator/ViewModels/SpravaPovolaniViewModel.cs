@@ -3,81 +3,46 @@ using BCSH2_RPG_Generator.Spravce;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
-    public class SpravaPovolaniViewModel : INotifyPropertyChanged
+    public partial class SpravaPovolaniViewModel : ObservableObject
     {
         private readonly SpravceVseho spravce;
 
+        [ObservableProperty]
         private Povolani? vybranePovolani;
+
+        [ObservableProperty]
         private string? novyNazev;
+
+        [ObservableProperty]
         private string? novyPopis;
+
+        [ObservableProperty]
         private string? obrazekCesta;
+
+        [ObservableProperty]
         private BitmapImage? obrazekZdroj;
 
+        [ObservableProperty]
         private bool rezimPridani;
+
+        [ObservableProperty]
         private bool isGridEnabled = true;
 
-        public ObservableCollection<Povolani> PovolaniSeznam { get; set; }
+        public ObservableCollection<Povolani> PovolaniSeznam { get; }
 
-        public Povolani? VybranePovolani
-        {
-            get => vybranePovolani;
-            set
-            {
-                vybranePovolani = value;
-                if (!rezimPridani)
-                {
-                    if (value != null)
-                    {
-                        NovyNazev = value.Nazev;
-                        NovyPopis = value.Popis;
-                        ObrazekCesta = value.Obrazek;
-                    }
-                    else
-                    {
-                        NovyNazev = NovyPopis = ObrazekCesta = string.Empty;
-                    }
-                    AktualizujObrazek();
-                }
-                OnPropertyChanged();
-                AktualizovatStavyTlacitek();
-            }
-        }
-
-        public string? NovyNazev { get => novyNazev; set { novyNazev = value; OnPropertyChanged(); } }
-        public string? NovyPopis { get => novyPopis; set { novyPopis = value; OnPropertyChanged(); } }
-        public string? ObrazekCesta
-        {
-            get => obrazekCesta;
-            set { obrazekCesta = value; OnPropertyChanged(); AktualizujObrazek(); }
-        }
-
-        public BitmapImage? ObrazekZdroj
-        {
-            get => obrazekZdroj;
-            set { obrazekZdroj = value; OnPropertyChanged(); }
-        }
-
-        public bool IsGridEnabled { get => isGridEnabled; set { isGridEnabled = value; OnPropertyChanged(); } }
         public string TextTlacitkoNova => rezimPridani ? "Přidat" : "Nové";
         public string TextTlacitkoSmazat => rezimPridani ? "Zrušit" : "Smazat";
         public bool MuzeUlozit => !rezimPridani && VybranePovolani != null;
         public bool MuzeZpet => !rezimPridani;
-
-        public ICommand NovaNeboPridatCommand { get; }
-        public ICommand SmazatNeboZrusitCommand { get; }
-        public ICommand UlozitCommand { get; }
-        public ICommand VybratObrazekCommand { get; }
-        public ICommand ZpetCommand { get; }
 
         public SpravaPovolaniViewModel()
         {
@@ -86,16 +51,35 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             PovolaniSeznam = new ObservableCollection<Povolani>(spravce.GetPovolani());
 
-            NovaNeboPridatCommand = new RelayCommand(_ => NovaNeboPridat());
-            SmazatNeboZrusitCommand = new RelayCommand(_ => SmazatNeboZrusit(), _ => rezimPridani || VybranePovolani != null);
-            UlozitCommand = new RelayCommand(_ => UlozitZmeny(), _ => MuzeUlozit);
-            VybratObrazekCommand = new RelayCommand(_ => VyberObrazek());
-            ZpetCommand = new RelayCommand(_ => ZavritOkno(), _ => MuzeZpet);
-
             if (PovolaniSeznam.Count > 0)
                 VybranePovolani = PovolaniSeznam[0];
         }
 
+        partial void OnVybranePovolaniChanged(Povolani? value)
+        {
+            if (!rezimPridani)
+            {
+                if (value != null)
+                {
+                    NovyNazev = value.Nazev;
+                    NovyPopis = value.Popis;
+                    ObrazekCesta = value.Obrazek;
+                }
+                else
+                {
+                    NovyNazev = NovyPopis = ObrazekCesta = string.Empty;
+                }
+                AktualizujObrazek();
+            }
+            AktualizovatStavyTlacitek();
+        }
+
+        partial void OnObrazekCestaChanged(string? value)
+        {
+            AktualizujObrazek();
+        }
+
+        [RelayCommand]
         private void NovaNeboPridat()
         {
             if (!rezimPridani)
@@ -139,6 +123,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             MessageBox.Show("Povolání přidáno!", "Hotovo");
         }
 
+        [RelayCommand(CanExecute = nameof(CanSmazatNeboZrusit))]
         private void SmazatNeboZrusit()
         {
             if (rezimPridani)
@@ -162,8 +147,10 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             VybranePovolani = PovolaniSeznam.FirstOrDefault();
         }
+        private bool CanSmazatNeboZrusit() => rezimPridani || VybranePovolani != null;
 
-        private void UlozitZmeny()
+        [RelayCommand(CanExecute = nameof(MuzeUlozit))]
+        private void Ulozit()
         {
             if (VybranePovolani == null) return;
 
@@ -192,32 +179,8 @@ namespace BCSH2_RPG_Generator.ViewModels
             MessageBox.Show("Změny byly uloženy.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void AktualizujObrazek()
-        {
-            string? path = ObrazekCesta;
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-            {
-                ObrazekZdroj = null;
-                return;
-            }
-
-            try
-            {
-                var bmp = new BitmapImage();
-                bmp.BeginInit();
-                bmp.CacheOption = BitmapCacheOption.OnLoad;
-                bmp.UriSource = new Uri(path, UriKind.Absolute);
-                bmp.EndInit();
-                bmp.Freeze();
-                ObrazekZdroj = bmp;
-            }
-            catch
-            {
-                ObrazekZdroj = null;
-            }
-        }
-
-        private void VyberObrazek()
+        [RelayCommand]
+        private void VybratObrazek()
         {
             var ofd = new OpenFileDialog
             {
@@ -227,7 +190,8 @@ namespace BCSH2_RPG_Generator.ViewModels
                 ObrazekCesta = ofd.FileName;
         }
 
-        private void ZavritOkno()
+        [RelayCommand(CanExecute = nameof(MuzeZpet))]
+        private void Zpet()
         {
             if (rezimPridani)
             {
@@ -256,6 +220,31 @@ namespace BCSH2_RPG_Generator.ViewModels
                 PovolaniSeznam.Add(s);
         }
 
+        private void AktualizujObrazek()
+        {
+            string? path = ObrazekCesta;
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            {
+                ObrazekZdroj = null;
+                return;
+            }
+
+            try
+            {
+                var bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.UriSource = new Uri(path, UriKind.Absolute);
+                bmp.EndInit();
+                bmp.Freeze();
+                ObrazekZdroj = bmp;
+            }
+            catch
+            {
+                ObrazekZdroj = null;
+            }
+        }
+
         private void AktualizovatStavyTlacitek()
         {
             OnPropertyChanged(nameof(TextTlacitkoNova));
@@ -264,13 +253,9 @@ namespace BCSH2_RPG_Generator.ViewModels
             OnPropertyChanged(nameof(MuzeZpet));
             OnPropertyChanged(nameof(IsGridEnabled));
 
-            (SmazatNeboZrusitCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (UlozitCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (ZpetCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            SmazatNeboZrusitCommand.NotifyCanExecuteChanged();
+            UlozitCommand.NotifyCanExecuteChanged();
+            ZpetCommand.NotifyCanExecuteChanged();
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

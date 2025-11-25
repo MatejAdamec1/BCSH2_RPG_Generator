@@ -4,44 +4,41 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Controls;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
-    public class PridejPostavuViewModel : INotifyPropertyChanged
+    public partial class PridejPostavuViewModel : ObservableObject
     {
         private readonly SpravceVseho spravce;
         private readonly Guid hraId;
         private readonly Guid? upravovanaId;
 
+        [ObservableProperty]
         private string? jmeno;
+
+        [ObservableProperty]
         private string? obrazekCesta;
+
+        [ObservableProperty]
         private BitmapImage? obrazekZdroj;
+
+        [ObservableProperty]
         private Rasa? vybranaRasa;
+
+        [ObservableProperty]
         private Povolani? vybranePovolani;
 
-        public ObservableCollection<Rasa> Rasy { get; set; }
-        public ObservableCollection<Povolani> PovolaniSeznam { get; set; }
-        public ObservableCollection<SchopnostItem> Schopnosti { get; set; }
-        public ObservableCollection<StatItem> Staty { get; set; }
-
-        public string? Jmeno { get => jmeno; set { jmeno = value; OnPropertyChanged(); } }
-        public Rasa? VybranaRasa { get => vybranaRasa; set { vybranaRasa = value; OnPropertyChanged(); } }
-        public Povolani? VybranePovolani { get => vybranePovolani; set { vybranePovolani = value; OnPropertyChanged(); } }
-        public string? ObrazekCesta { get => obrazekCesta; set { obrazekCesta = value; OnPropertyChanged(); AktualizujObrazek(); } }
-        public BitmapImage? ObrazekZdroj { get => obrazekZdroj; set { obrazekZdroj = value; OnPropertyChanged(); } }
-
-        public ICommand UlozitCommand { get; }
-        public ICommand ZrusitCommand { get; }
-        public ICommand VybratObrazekCommand { get; }
-        public ICommand ZvysitStatCommand { get; }
-        public ICommand SnizitStatCommand { get; }
+        public ObservableCollection<Rasa> Rasy { get; }
+        public ObservableCollection<Povolani> PovolaniSeznam { get; }
+        public ObservableCollection<SchopnostItem> Schopnosti { get; }
+        public ObservableCollection<StatItem> Staty { get; }
 
         public PridejPostavuViewModel(SpravceVseho spravce, Guid hraId, Guid? upravovanaId = null)
         {
@@ -65,39 +62,18 @@ namespace BCSH2_RPG_Generator.ViewModels
                 new StatItem("Charisma", 10)
             });
 
-            UlozitCommand = new RelayCommand(_ => Ulozit());
-            ZrusitCommand = new RelayCommand(_ => ZavritOkno());
-            VybratObrazekCommand = new RelayCommand(_ => VyberObrazek());
-            ZvysitStatCommand = new RelayCommand(stat => ZmenitStat(stat as StatItem, +1));
-            SnizitStatCommand = new RelayCommand(stat => ZmenitStat(stat as StatItem, -1));
-
             ObrazekCesta = "C:\\Users\\matej\\source\\repos\\Generator_RPG\\Generator_RPG\\Assets\\PictureBox UnknownbackTemp.png";
 
             if (upravovanaId.HasValue)
                 NactiData();
         }
 
-        private void NactiData()
+        partial void OnObrazekCestaChanged(string? value)
         {
-            var p = spravce.NajdiPostavu(upravovanaId!.Value);
-            if (p == null) return;
-
-            Jmeno = p.Jmeno;
-            VybranaRasa = spravce.NajdiRasu(p.RasaPostavy);
-            VybranePovolani = spravce.NajdiPovolani(p.PovolaniPostavy);
-            ObrazekCesta = p.Obrazek;
-
-            foreach (var schop in Schopnosti)
-                schop.JeVybrana = p.SchopnostiPostavy.Contains(schop.Schopnost.Id);
-
-            foreach (var stat in Staty)
-            {
-                var nalezeny = p.Staty.FirstOrDefault(s => s.Key == stat.Nazev);
-                if (!nalezeny.Equals(default(KeyValuePair<string, int>)))
-                    stat.Hodnota = nalezeny.Value;
-            }
+            AktualizujObrazek();
         }
 
+        [RelayCommand]
         private void Ulozit()
         {
             ObrazekCesta = string.IsNullOrWhiteSpace(ObrazekCesta) ? "C:\\Users\\matej\\source\\repos\\Generator_RPG\\Generator_RPG\\Assets\\PictureBox UnknownbackTemp.png" : ObrazekCesta;
@@ -136,11 +112,51 @@ namespace BCSH2_RPG_Generator.ViewModels
             ZavritOkno();
         }
 
-        private void VyberObrazek()
+        [RelayCommand]
+        private void Zrusit()
+        {
+            ZavritOkno();
+        }
+
+        [RelayCommand]
+        private void VybratObrazek()
         {
             var ofd = new OpenFileDialog { Filter = "Obrázky (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg" };
             if (ofd.ShowDialog() == true)
                 ObrazekCesta = ofd.FileName;
+        }
+
+        [RelayCommand]
+        private void ZvysitStat(StatItem? stat)
+        {
+            ZmenitStat(stat, +1);
+        }
+
+        [RelayCommand]
+        private void SnizitStat(StatItem? stat)
+        {
+            ZmenitStat(stat, -1);
+        }
+
+        private void NactiData()
+        {
+            var p = spravce.NajdiPostavu(upravovanaId!.Value);
+            if (p == null) return;
+
+            Jmeno = p.Jmeno;
+            VybranaRasa = spravce.NajdiRasu(p.RasaPostavy);
+            VybranePovolani = spravce.NajdiPovolani(p.PovolaniPostavy);
+            ObrazekCesta = p.Obrazek;
+
+            foreach (var schop in Schopnosti)
+                schop.JeVybrana = p.SchopnostiPostavy.Contains(schop.Schopnost.Id);
+
+            foreach (var stat in Staty)
+            {
+                var nalezeny = p.Staty.FirstOrDefault(s => s.Key == stat.Nazev);
+                if (!nalezeny.Equals(default(KeyValuePair<string, int>)))
+                    stat.Hodnota = nalezeny.Value;
+            }
         }
 
         private void AktualizujObrazek()
@@ -170,30 +186,27 @@ namespace BCSH2_RPG_Generator.ViewModels
         {
             Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.DataContext == this)?.Close();
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public class SchopnostItem : INotifyPropertyChanged
+    public partial class SchopnostItem : ObservableObject
     {
         public Schopnost Schopnost { get; set; } = null!;
+
+        [ObservableProperty]
         private bool jeVybrana;
-        public bool JeVybrana { get => jeVybrana; set { jeVybrana = value; OnPropertyChanged(); } }
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? n = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
     }
 
-    public class StatItem : INotifyPropertyChanged
+    public partial class StatItem : ObservableObject
     {
         public string Nazev { get; set; }
+
+        [ObservableProperty]
         private int hodnota;
-        public int Hodnota { get => hodnota; set { hodnota = value; OnPropertyChanged(); } }
 
-        public StatItem(string nazev, int hodnota) { Nazev = nazev; this.hodnota = hodnota; }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? n = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
+        public StatItem(string nazev, int hodnota)
+        {
+            Nazev = nazev;
+            this.hodnota = hodnota;
+        }
     }
 }

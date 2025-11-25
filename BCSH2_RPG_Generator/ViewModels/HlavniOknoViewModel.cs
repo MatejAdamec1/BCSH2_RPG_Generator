@@ -3,61 +3,34 @@ using BCSH2_RPG_Generator.Spravce;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
-    public class HlavniOknoViewModel : INotifyPropertyChanged
+    public partial class HlavniOknoViewModel : ObservableObject
     {
         private readonly SpravceVseho spravce;
         private readonly Guid hraId;
 
-        public ObservableCollection<PostavaZobraz> Postavy { get; set; }
+        public ObservableCollection<PostavaZobraz> Postavy { get; }
+        public ObservableCollection<string> SchopnostiVybranePostavy { get; }
+        public ObservableCollection<KeyValuePair<string, int>> StatyVybranePostavy { get; }
+        public ObservableCollection<string> FilterRasa { get; }
+        public ObservableCollection<string> FilterPovolani { get; }
 
-        public ObservableCollection<string> SchopnostiVybranePostavy { get; set; }
-        public ObservableCollection<KeyValuePair<string, int>> StatyVybranePostavy { get; set; }
-
-        public ObservableCollection<string> FilterRasa { get; set; }
-        public ObservableCollection<string> FilterPovolani { get; set; }
-
+        [ObservableProperty]
         private string? vybranaRasa;
-        public string? VybranaRasa
-        {
-            get => vybranaRasa;
-            set { vybranaRasa = value; OnPropertyChanged(); }
-        }
 
+        [ObservableProperty]
         private string? vybranePovolani;
-        public string? VybranePovolani
-        {
-            get => vybranePovolani;
-            set { vybranePovolani = value; OnPropertyChanged(); }
-        }
 
+        [ObservableProperty]
         private PostavaZobraz? vybranaPostava;
-        public PostavaZobraz? VybranaPostava
-        {
-            get => vybranaPostava;
-            set
-            {
-                vybranaPostava = value;
-                OnPropertyChanged();
-                NaplnDetailPostavy();
-                AktualizovatTlacitka();
-            }
-        }
 
         public bool MuzeZpet => true;
-
-        public ICommand PridatCommand { get; }
-        public ICommand UpravitCommand { get; }
-        public ICommand SmazatCommand { get; }
-        public ICommand FiltrovatCommand { get; }
-        public ICommand ZpetCommand { get; }
 
         public HlavniOknoViewModel(SpravceVseho spravce, Guid hraId)
         {
@@ -78,16 +51,69 @@ namespace BCSH2_RPG_Generator.ViewModels
             foreach (var p in spravce.GetPovolani()) FilterPovolani.Add(p.Nazev);
             VybranePovolani = "Vše";
 
-            PridatCommand = new RelayCommand(_ => PridatPostavu());
-            UpravitCommand = new RelayCommand(_ => UpravitPostavu(), _ => VybranaPostava != null);
-            SmazatCommand = new RelayCommand(_ => SmazatPostavu(), _ => VybranaPostava != null);
-            FiltrovatCommand = new RelayCommand(_ => FiltrovatPostavy());
-            ZpetCommand = new RelayCommand(_ => ZavritOkno(), _ => MuzeZpet);
-
             FiltrovatPostavy();
 
             if (Postavy.Any())
                 VybranaPostava = Postavy[0];
+        }
+
+        partial void OnVybranaPostavaChanged(PostavaZobraz? value)
+        {
+            NaplnDetailPostavy();
+            AktualizovatTlacitka();
+        }
+
+        [RelayCommand]
+        private void Pridat()
+        {
+            var view = new BCSH2_RPG_Generator.Views.PridejPostavuView();
+            view.DataContext = new BCSH2_RPG_Generator.ViewModels.PridejPostavuViewModel(spravce, hraId);
+            view.ShowDialog();
+            FiltrovatPostavy();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanUpravit))]
+        private void Upravit()
+        {
+            if (VybranaPostava == null) return;
+
+            var view = new BCSH2_RPG_Generator.Views.PridejPostavuView();
+            view.DataContext = new BCSH2_RPG_Generator.ViewModels.PridejPostavuViewModel(spravce, hraId, VybranaPostava.Id);
+            view.ShowDialog();
+            FiltrovatPostavy();
+        }
+        private bool CanUpravit() => VybranaPostava != null;
+
+        [RelayCommand(CanExecute = nameof(CanSmazat))]
+        private void Smazat()
+        {
+            if (VybranaPostava == null) return;
+
+            var potvrdit = MessageBox.Show($"Opravdu smazat postavu „{VybranaPostava.Jmeno}“?",
+                                           "Potvrzení", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (potvrdit != MessageBoxResult.Yes) return;
+
+            spravce.SmazPostavu(VybranaPostava.Id);
+            FiltrovatPostavy();
+        }
+        private bool CanSmazat() => VybranaPostava != null;
+
+        [RelayCommand]
+        private void Filtrovat()
+        {
+            FiltrovatPostavy();
+        }
+
+        [RelayCommand(CanExecute = nameof(MuzeZpet))]
+        private void Zpet()
+        {
+            var currentWindow = Application.Current.Windows
+                .OfType<Window>()
+                .FirstOrDefault(w => w.DataContext == this);
+
+            var okno = new BCSH2_RPG_Generator.Views.MainMenuView();
+            currentWindow?.Close();
+            okno.Show();
         }
 
         private void NaplnDetailPostavy()
@@ -144,56 +170,11 @@ namespace BCSH2_RPG_Generator.ViewModels
                 VybranaPostava = Postavy[0];
         }
 
-        private void PridatPostavu()
-        {
-            var view = new BCSH2_RPG_Generator.Views.PridejPostavuView();
-            view.DataContext = new BCSH2_RPG_Generator.ViewModels.PridejPostavuViewModel(spravce, hraId);
-            view.ShowDialog();
-            FiltrovatPostavy(); 
-        }
-
-        private void UpravitPostavu()
-        {
-            if (VybranaPostava == null) return;
-
-            var view = new BCSH2_RPG_Generator.Views.PridejPostavuView();
-            view.DataContext = new BCSH2_RPG_Generator.ViewModels.PridejPostavuViewModel(spravce, hraId, VybranaPostava.Id);
-            view.ShowDialog();
-            FiltrovatPostavy(); 
-        }
-
-        private void SmazatPostavu()
-        {
-            if (VybranaPostava == null) return;
-
-            var potvrdit = MessageBox.Show($"Opravdu smazat postavu „{VybranaPostava.Jmeno}“?",
-                                           "Potvrzení", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (potvrdit != MessageBoxResult.Yes) return;
-
-            spravce.SmazPostavu(VybranaPostava.Id);
-            FiltrovatPostavy(); 
-        }
-
-        private void ZavritOkno()
-        {
-            var currentWindow = Application.Current.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w.DataContext == this);
-
-            var okno = new BCSH2_RPG_Generator.Views.MainMenuView();
-            currentWindow?.Close();
-            okno.Show();
-        }
-
         private void AktualizovatTlacitka()
         {
-            (UpravitCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (SmazatCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            UpravitCommand.NotifyCanExecuteChanged();
+            SmazatCommand.NotifyCanExecuteChanged();
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
     public class PostavaZobraz

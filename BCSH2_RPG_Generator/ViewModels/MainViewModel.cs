@@ -11,11 +11,5 @@ namespace BCSH2_RPG_Generator.ViewModels
 {
     internal class MainViewModel
     {
-        private readonly SpravceVseho spravce;
-        public ObservableCollection<Postava> Postavy { get; set; }
-
-        public MainViewModel()
-        {
-        }
     }
 }
