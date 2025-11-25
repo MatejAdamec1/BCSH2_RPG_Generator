@@ -9,7 +9,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\PictureBox backTemp.png" />
+    <None Remove="Views\PictureBoxPovolani UnknownbackTemp.png" />
+    <None Remove="Views\PictureBoxRasa UnknownbackTemp.png" />
+    <None Remove="Views\PictureBoxRasaUnknownbackTemp.png" />
+    <None Remove="Views\PictureBoxSchopnost UnknownbackTemp.png" />
+    <None Remove="Views\PictureBoxSchopnostUnknownbackTemp.png" />
+    <None Remove="Views\pozadi.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LiteDB" Version="5.0.21" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Views\PictureBox backTemp.png" />
+    <Resource Include="Views\PictureBoxPovolani UnknownbackTemp.png" />
+    <Resource Include="Views\PictureBoxRasaUnknownbackTemp.png" />
+    <Resource Include="Views\PictureBoxSchopnostUnknownbackTemp.png" />
+    <Resource Include="Views\pozadi.png" />
   </ItemGroup>
 
 </Project>

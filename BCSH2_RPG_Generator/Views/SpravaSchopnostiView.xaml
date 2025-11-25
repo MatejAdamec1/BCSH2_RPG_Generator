@@ -161,7 +161,7 @@
                 BorderBrush="#5C3A1E" BorderThickness="3"
                 CornerRadius="8" Margin="28,0,0,0">
             <Border.Background>
-                <ImageBrush ImageSource="/Views/PictureBoxSchopnost UnknownbackTemp.png"/>
+                <ImageBrush ImageSource="/Views/PictureBoxSchopnostUnknownbackTemp.png"/>
             </Border.Background>
             <Image Stretch="UniformToFill"
                    Margin="-3,0,0,0"

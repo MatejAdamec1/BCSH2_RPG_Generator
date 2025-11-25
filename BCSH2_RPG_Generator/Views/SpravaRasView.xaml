@@ -155,7 +155,7 @@
                 BorderBrush="#5C3A1E" BorderThickness="3"
                 CornerRadius="8" Margin="37,10,0,10">
             <Border.Background>
-                <ImageBrush ImageSource="/Views/PictureBoxRasa UnknownbackTemp.png"/>
+                <ImageBrush ImageSource="/Views/PictureBoxRasaUnknownbackTemp.png"/>
             </Border.Background>
             <Image Stretch="UniformToFill"
                    Source="{Binding ObrazekZdroj}"/>
