@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Generator_RPG.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
@@ -95,13 +96,13 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (string.IsNullOrWhiteSpace(NovyNazev))
             {
-                MessageBox.Show("Zadej název povolání!", "Chyba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Zadej název povolání!", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
             if (spravce.NajdiPovolaniPodleNazvu(NovyNazev) != null)
             {
-                MessageBox.Show("Povolání s tímto názvem už existuje.", "Duplicitní název", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Povolání s tímto názvem už existuje.", "Duplicitní název", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -109,7 +110,7 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (!spravce.VytvorPovolani(NovyNazev, NovyPopis ?? "", ulozitCestu))
             {
-                MessageBox.Show("Vytvoření se nepodařilo.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show("Vytvoření se nepodařilo.", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -120,7 +121,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             IsGridEnabled = true;
             AktualizovatStavyTlacitek();
 
-            MessageBox.Show("Povolání přidáno!", "Hotovo");
+            CustomMessageBox.Show("Povolání přidáno!", "Hotovo");
         }
 
         [RelayCommand(CanExecute = nameof(CanSmazatNeboZrusit))]
@@ -138,8 +139,8 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (VybranePovolani == null) return;
 
-            if (MessageBox.Show($"Opravdu smazat povolání „{VybranePovolani.Nazev}“?",
-                                "Potvrzení", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            if (CustomMessageBox.Show($"Opravdu smazat povolání „{VybranePovolani.Nazev}“?",
+                                "Potvrzení", CustomMessageBoxButtons.YesNo) != MessageBoxResult.Yes)
                 return;
 
             spravce.SmazPovolani(VybranePovolani.Id);
@@ -157,14 +158,14 @@ namespace BCSH2_RPG_Generator.ViewModels
             var nazev = (NovyNazev ?? "").Trim();
             if (string.IsNullOrWhiteSpace(nazev))
             {
-                MessageBox.Show("Název nemůže být prázdný.", "Upozornění", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Název nemůže být prázdný.", "Upozornění", CustomMessageBoxButtons.OK);
                 return;
             }
 
             var exist = spravce.NajdiPovolaniPodleNazvu(nazev);
             if (exist != null && exist.Id != VybranePovolani.Id)
             {
-                MessageBox.Show("Jiné povolání už má stejný název.", "Duplicitní název", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Jiné povolání už má stejný název.", "Duplicitní název", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -176,7 +177,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             ObnovitSeznam();
             VybranePovolani = PovolaniSeznam.FirstOrDefault(x => x.Id == upravene.Id);
 
-            MessageBox.Show("Změny byly uloženy.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            CustomMessageBox.Show("Změny byly uloženy.", "Hotovo", CustomMessageBoxButtons.OK);
         }
 
         [RelayCommand]
@@ -195,8 +196,8 @@ namespace BCSH2_RPG_Generator.ViewModels
         {
             if (rezimPridani)
             {
-                MessageBox.Show("Nejprve dokonči nebo zruš přidání.", "Upozornění",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                CustomMessageBox.Show("Nejprve dokonči nebo zruš přidání.", "Upozornění",
+                                CustomMessageBoxButtons.OK);
                 return;
             }
 

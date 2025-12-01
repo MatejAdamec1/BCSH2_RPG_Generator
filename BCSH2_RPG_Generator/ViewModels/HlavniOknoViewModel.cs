@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Generator_RPG.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
@@ -89,9 +90,9 @@ namespace BCSH2_RPG_Generator.ViewModels
         {
             if (VybranaPostava == null) return;
 
-            var potvrdit = MessageBox.Show($"Opravdu smazat postavu „{VybranaPostava.Jmeno}“?",
-                                           "Potvrzení", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (potvrdit != MessageBoxResult.Yes) return;
+            if (CustomMessageBox.Show($"Opravdu smazat postavu „{VybranaPostava.Jmeno}“?",
+                                           "Potvrzení", CustomMessageBoxButtons.YesNo) != MessageBoxResult.Yes) 
+                return;
 
             spravce.SmazPostavu(VybranaPostava.Id);
             FiltrovatPostavy();

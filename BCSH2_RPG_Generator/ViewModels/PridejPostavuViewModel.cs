@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Controls;
+using Generator_RPG.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
@@ -79,14 +80,14 @@ namespace BCSH2_RPG_Generator.ViewModels
             ObrazekCesta = string.IsNullOrWhiteSpace(ObrazekCesta) ? "C:\\Users\\matej\\source\\repos\\Generator_RPG\\Generator_RPG\\Assets\\PictureBox UnknownbackTemp.png" : ObrazekCesta;
             if (string.IsNullOrWhiteSpace(Jmeno) || VybranaRasa == null || VybranePovolani == null)
             {
-                MessageBox.Show("Vyplň všechna pole!", "Chyba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Vyplň všechna pole!", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
             var vybraneSchopnosti = Schopnosti.Where(s => s.JeVybrana).Select(s => s.Schopnost.Id).ToList();
             if (!vybraneSchopnosti.Any())
             {
-                MessageBox.Show("Vyber alespoň jednu schopnost!", "Chyba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Vyber alespoň jednu schopnost!", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -96,17 +97,17 @@ namespace BCSH2_RPG_Generator.ViewModels
             {
                 if (!spravce.VytvorPostavu(Jmeno, VybranaRasa.Id, VybranePovolani.Id, vybraneSchopnosti, staty, hraId, ObrazekCesta))
                 {
-                    MessageBox.Show("Postava s tímto jménem už existuje.", "Duplicitní jméno", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    CustomMessageBox.Show("Postava s tímto jménem už existuje.", "Duplicitní jméno", CustomMessageBoxButtons.OK);
                     return;
                 }
-                MessageBox.Show("Postava přidána!", "Hotovo");
+                CustomMessageBox.Show("Postava přidána!", "Hotovo");
             }
             else
             {
                 var p = new Postava(Jmeno, VybranaRasa.Id, VybranePovolani.Id, vybraneSchopnosti, staty, hraId, ObrazekCesta);
                 p.Id = upravovanaId.Value;
                 spravce.UpravPostavu(p);
-                MessageBox.Show("Postava upravena.", "Hotovo");
+                CustomMessageBox.Show("Postava upravena.", "Hotovo");
             }
 
             ZavritOkno();

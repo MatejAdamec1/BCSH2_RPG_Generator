@@ -332,7 +332,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                 <TextBlock Text="{Binding Nazev}" Width="100" Foreground="#FFD479"/>
-                                <TextBox Text="{Binding Hodnota}" Width="40"
+                                <TextBox Text="{Binding Hodnota}" IsReadOnly ="true" Width="40"
                                          HorizontalContentAlignment="Center"
                                          Background="#0E0702" Foreground="#FFD479"
                                          BorderBrush="#5C3A1E" BorderThickness="1"/>
@@ -355,9 +355,10 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Margin="210,362,0,0" Grid.ColumnSpan="2">
-            <Button Content="Storno" Command="{Binding ZrusitCommand}"
-                    Width="100" Margin="10,0,0,0"/>
+
             <Button Content="OK" Command="{Binding UlozitCommand}"
+                    Width="100" Margin="10,0,0,0"/>
+            <Button Content="Storno" Command="{Binding ZrusitCommand}"
                     Width="100" Margin="10,0,0,0"/>
         </StackPanel>
     </Grid>

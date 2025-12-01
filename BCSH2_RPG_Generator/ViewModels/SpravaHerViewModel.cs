@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Generator_RPG.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
@@ -99,19 +100,19 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (string.IsNullOrWhiteSpace(NovyNazev))
             {
-                MessageBox.Show("Zadej název hry!", "Chyba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Zadej název hry!", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
             if (spravce.NajdiHruPodleNazvu(NovyNazev) != null)
             {
-                MessageBox.Show("Hra s tímto názvem už existuje.", "Duplicitní název", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Hra s tímto názvem už existuje.", "Duplicitní název", CustomMessageBoxButtons.OK);
                 return;
             }
 
             if (!spravce.VytvorHru(NovyNazev, NovyPopis ?? ""))
             {
-                MessageBox.Show("Vytvoření hry se nepodařilo.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show("Vytvoření hry se nepodařilo.", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -122,7 +123,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             IsGridEnabled = true;
             AktualizovatStavyTlacitek();
 
-            MessageBox.Show("Hra přidána!", "Hotovo");
+            CustomMessageBox.Show("Hra přidána!", "Hotovo");
         }
 
         [RelayCommand(CanExecute = nameof(CanSmazatNeboZrusit))]
@@ -140,8 +141,8 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (VybranaHra == null) return;
 
-            if (MessageBox.Show($"Opravdu smazat hru „{VybranaHra.Nazev}“?",
-                                "Potvrzení", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            if (CustomMessageBox.Show($"Opravdu smazat hru „{VybranaHra.Nazev}“?",
+                                "Potvrzení", CustomMessageBoxButtons.YesNo) != MessageBoxResult.Yes)
                 return;
 
             spravce.SmazHru(VybranaHra.Id);
@@ -159,14 +160,14 @@ namespace BCSH2_RPG_Generator.ViewModels
             var nazev = (NovyNazev ?? "").Trim();
             if (string.IsNullOrWhiteSpace(nazev))
             {
-                MessageBox.Show("Název nemůže být prázdný.", "Upozornění", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Název nemůže být prázdný.", "Upozornění", CustomMessageBoxButtons.OK);
                 return;
             }
 
             var exist = spravce.NajdiHruPodleNazvu(nazev);
             if (exist != null && exist.Id != VybranaHra.Id)
             {
-                MessageBox.Show("Jiná hra už má stejný název.", "Duplicitní název", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Jiná hra už má stejný název.", "Duplicitní název", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -178,7 +179,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             ObnovitSeznam();
             VybranaHra = Hry.FirstOrDefault(x => x.Id == upravena.Id);
 
-            MessageBox.Show("Změny byly uloženy.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            CustomMessageBox.Show("Změny byly uloženy.", "Hotovo", CustomMessageBoxButtons.OK);
         }
 
         [RelayCommand]
@@ -203,8 +204,8 @@ namespace BCSH2_RPG_Generator.ViewModels
         {
             if (rezimPridani)
             {
-                MessageBox.Show("Nejprve dokonči nebo zruš přidání.", "Upozornění",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                CustomMessageBox.Show("Nejprve dokonči nebo zruš přidání.", "Upozornění",
+                                CustomMessageBoxButtons.OK);
                 return;
             }
 

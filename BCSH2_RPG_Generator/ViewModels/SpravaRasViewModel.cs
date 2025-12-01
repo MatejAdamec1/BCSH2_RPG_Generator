@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Generator_RPG.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
@@ -96,13 +97,13 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (string.IsNullOrWhiteSpace(NovyNazev))
             {
-                MessageBox.Show("Zadej název rasy!", "Chyba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Zadej název rasy!", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
             if (spravce.NajdiRasuPodleNazvu(NovyNazev) != null)
             {
-                MessageBox.Show("Rasa s tímto názvem už existuje.", "Duplicitní název", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Rasa s tímto názvem už existuje.", "Duplicitní název", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -110,7 +111,7 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (!spravce.VytvorRasu(NovyNazev, NovyPopis ?? "", ulozitCestu))
             {
-                MessageBox.Show("Vytvoření se nepodařilo.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show("Vytvoření se nepodařilo.", "Chyba", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -121,7 +122,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             IsGridEnabled = true;
             AktualizovatStavyTlacitek();
 
-            MessageBox.Show("Rasa přidána!", "Hotovo");
+            CustomMessageBox.Show("Rasa přidána!", "Hotovo");
         }
 
         [RelayCommand(CanExecute = nameof(CanSmazatNeboZrusit))]
@@ -139,8 +140,8 @@ namespace BCSH2_RPG_Generator.ViewModels
 
             if (VybranaRasa == null) return;
 
-            if (MessageBox.Show($"Opravdu smazat rasu „{VybranaRasa.Nazev}“?",
-                                "Potvrzení", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            if (CustomMessageBox.Show($"Opravdu smazat rasu „{VybranaRasa.Nazev}“?",
+                                "Potvrzení", CustomMessageBoxButtons.YesNo) != MessageBoxResult.Yes)
                 return;
 
             spravce.SmazRasu(VybranaRasa.Id);
@@ -158,14 +159,14 @@ namespace BCSH2_RPG_Generator.ViewModels
             var nazev = (NovyNazev ?? "").Trim();
             if (string.IsNullOrWhiteSpace(nazev))
             {
-                MessageBox.Show("Název nemůže být prázdný.", "Upozornění", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Název nemůže být prázdný.", "Upozornění", CustomMessageBoxButtons.OK);
                 return;
             }
 
             var exist = spravce.NajdiRasuPodleNazvu(nazev);
             if (exist != null && exist.Id != VybranaRasa.Id)
             {
-                MessageBox.Show("Jiná rasa už má stejný název.", "Duplicitní název", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Jiná rasa už má stejný název.", "Duplicitní název", CustomMessageBoxButtons.OK);
                 return;
             }
 
@@ -177,7 +178,7 @@ namespace BCSH2_RPG_Generator.ViewModels
             ObnovitSeznam();
             VybranaRasa = Rasy.FirstOrDefault(x => x.Id == upravena.Id);
 
-            MessageBox.Show("Změny byly uloženy.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            CustomMessageBox.Show("Změny byly uloženy.", "Hotovo", CustomMessageBoxButtons.OK);
             AktualizovatStavyTlacitek();
         }
 
@@ -197,8 +198,8 @@ namespace BCSH2_RPG_Generator.ViewModels
         {
             if (rezimPridani)
             {
-                MessageBox.Show("Nejprve dokonči nebo zruš přidání.", "Upozornění",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                CustomMessageBox.Show("Nejprve dokonči nebo zruš přidání.", "Upozornění",
+                                CustomMessageBoxButtons.OK);
                 return;
             }
 
