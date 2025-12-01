@@ -75,9 +75,9 @@ namespace BCSH2_RPG_Generator.ViewModels
                 .OfType<Window>()
                 .FirstOrDefault(w => w.DataContext == this);
 
-            var okno = new BCSH2_RPG_Generator.Views.HlavniOknoView
+            var okno = new Views.HlavniOknoView
             {
-                DataContext = new BCSH2_RPG_Generator.ViewModels.HlavniOknoViewModel(spravce, VybranaHra.Id)
+                DataContext = new HlavniOknoViewModel(spravce, VybranaHra.Id)
             };
 
             currentWindow?.Close();

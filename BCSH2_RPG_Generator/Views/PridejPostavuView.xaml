@@ -10,260 +10,14 @@
         Foreground="#FFD479"
         Background="#1A0E07">
 
-    <Window.Resources>
-        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="20" />
-                </Grid.ColumnDefinitions>
-
-                <!-- Celý rámeček -->
-                <Border x:Name="Border"
-                Grid.ColumnSpan="2"
-                CornerRadius="3"
-                Background="#5C3A1E"
-                BorderBrush="#5C3A1E"
-                BorderThickness="1" />
-
-                <!-- Oddělení šipky -->
-                <Border Grid.Column="0"
-                CornerRadius="3,0,0,3"
-                Margin="1"
-                Background="#5C3A1E"
-                BorderBrush="#5C3A1E"
-                BorderThickness="0,0,1,0" />
-
-                <!-- Zlatá šipka -->
-                <Path x:Name="Arrow"
-              Grid.Column="1"
-              Fill="#FFD479"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              Data="M0,0 L4,4 L8,0 Z" />
-            </Grid>
-
-            <!-- Hover / click efekty -->
-            <ControlTemplate.Triggers>
-                <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="#7A4A25"/>
-                    <Setter TargetName="Border" Property="BorderBrush" Value="Gold"/>
-                    <Setter TargetName="Arrow" Property="Fill" Value="Gold"/>
-                </Trigger>
-
-                <Trigger Property="ToggleButton.IsChecked" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="#7A4A25"/>
-                    <Setter TargetName="Border" Property="BorderBrush" Value="Gold"/>
-                </Trigger>
-
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter TargetName="Border" Property="Background" Value="#3A2A18"/>
-                    <Setter TargetName="Border" Property="BorderBrush" Value="#3A2A18"/>
-                    <Setter TargetName="Arrow" Property="Fill" Value="#806B48"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
-
-        <!-- 🟤 Textbox pro editovatelný ComboBox -->
-        <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
-            <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
-        </ControlTemplate>
-
-        <!-- 🟤 Styl ComboBox -->
-        <Style TargetType="{x:Type ComboBox}">
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-            <Setter Property="MinWidth" Value="120"/>
-            <Setter Property="MinHeight" Value="29"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#FFD479"/>
-            <Setter Property="Background" Value="#5C3A1E"/>
-            <Setter Property="BorderBrush" Value="#5C3A1E"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ComboBox}">
-                        <Grid>
-                            <!-- Tlačítko s šipkou -->
-                            <ToggleButton x:Name="ToggleButton"
-                                  Template="{StaticResource ComboBoxToggleButton}"
-                                  Grid.Column="2"
-                                  Focusable="False"
-                                  IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                  ClickMode="Press"/>
-
-                            <!-- Zobrazený text -->
-                            <ContentPresenter x:Name="ContentSite"
-                                      IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                      Margin="6,3,30,3"
-                                      VerticalAlignment="Center"
-                                      HorizontalAlignment="Left"/>
-
-                            <!-- TextBox pro editovatelný ComboBox -->
-                            <TextBox x:Name="PART_EditableTextBox"
-                             Style="{x:Null}"
-                             Template="{StaticResource ComboBoxTextBox}"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Center"
-                             Margin="6,3,30,3"
-                             Focusable="True"
-                             Background="#2A160A"
-                             Foreground="#FFD479"
-                             Visibility="Hidden"
-                             IsReadOnly="{TemplateBinding IsReadOnly}"/>
-
-                            <!-- Popup s položkami -->
-                            <Popup x:Name="Popup"
-                           Placement="Bottom"
-                           IsOpen="{TemplateBinding IsDropDownOpen}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           PopupAnimation="Slide">
-                                <Grid x:Name="DropDown"
-                              SnapsToDevicePixels="True"
-                              MinWidth="{TemplateBinding ActualWidth}"
-                              MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                    <Border x:Name="DropDownBorder"
-                                    Background="#2A160A"
-                                    BorderThickness="1"
-                                    BorderBrush="#5C3A1E"
-                                    CornerRadius="3"/>
-                                    <ScrollViewer Margin="4"
-                                          SnapsToDevicePixels="True">
-                                        <StackPanel IsItemsHost="True"
-                                            KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                    </ScrollViewer>
-                                </Grid>
-                            </Popup>
-                        </Grid>
-
-                        <!-- Triggery -->
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="HasItems" Value="False">
-                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="50"/>
-                            </Trigger>
-
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="#806B48"/>
-                            </Trigger>
-
-                            <Trigger Property="IsGrouping" Value="True">
-                                <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
-                            </Trigger>
-
-                            <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="True">
-                                <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="3"/>
-                                <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
-                            </Trigger>
-
-                            <Trigger Property="IsEditable" Value="True">
-                                <Setter Property="IsTabStop" Value="False"/>
-                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- 🟤 Položky dropdownu -->
-        <Style TargetType="{x:Type ComboBoxItem}">
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="Foreground" Value="#FFD479"/>
-            <Setter Property="Background" Value="#2A160A"/>
-            <Setter Property="Padding" Value="6,2"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ComboBoxItem}">
-                        <Border x:Name="Border"
-                        Padding="2"
-                        Background="{TemplateBinding Background}">
-                            <ContentPresenter/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsHighlighted" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#7A4A25"/>
-                                <Setter Property="Foreground" Value="Gold"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#5C3A1E"/>
-                                <Setter Property="Foreground" Value="Gold"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="#806B48"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-
-        <Style TargetType="Button">
-            <Setter Property="Background" Value="#5C3A1E"/>
-            <Setter Property="Foreground" Value="#FFD479"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="6,3"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
-            Background="{TemplateBinding Background}"
-            CornerRadius="1"
-            BorderThickness="{TemplateBinding BorderThickness}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          RecognizesAccessKey="True"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <!-- Hover -->
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#7A4A25"/>
-                                <Setter TargetName="border" Property="CornerRadius" Value="3"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="Gold"/>
-                                <Setter TargetName="border" Property="BorderThickness" Value="1"/>
-                            </Trigger>
-
-                            <!-- Disabled -->
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="#3A2A18"/>
-                                <Setter Property="Foreground" Value="#806B48"/>
-                                <Setter Property="Cursor" Value="Arrow"/>
-                            </Trigger>
-
-                            <!-- Pressed -->
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#3E1E0C"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="230"/>
-            <!-- obrázek + základy -->
             <ColumnDefinition Width="240"/>
-            <!-- schopnosti -->
             <ColumnDefinition Width="*"/>
-            <!-- staty -->
         </Grid.ColumnDefinitions>
 
-        <!-- 🟤 LEVÝ PANEL: obrázek, jméno, rasa, povolání -->
         <StackPanel Grid.Column="0" VerticalAlignment="Top" Margin="-20,0,20,0">
             <Border BorderBrush="#5C3A1E" BorderThickness="3" CornerRadius="5" Margin="0,0,0,10" Width="180" Height="180">
                 <Image Source="{Binding ObrazekZdroj}" Width="180" Height="180" Stretch="Uniform"/>
@@ -295,7 +49,6 @@
                       Height="28" Width="190"/>
         </StackPanel>
 
-        <!-- 🟤 STŘEDNÍ PANEL: Schopnosti -->
         <StackPanel Grid.Column="1" Margin="0,0,50,0">
             <TextBlock Text="Schopnosti" 
                        FontWeight="Bold" FontSize="14"
@@ -319,7 +72,6 @@
             </Border>
         </StackPanel>
 
-        <!-- 🟤 PRAVÝ PANEL: Staty -->
         <StackPanel Grid.Column="1" VerticalAlignment="Top" Grid.ColumnSpan="2" Margin="216,0,24,0">
             <TextBlock Text="Staty"
                        FontWeight="Bold" FontSize="14"
@@ -349,7 +101,6 @@
             </Border>
         </StackPanel>
 
-        <!-- 🟤 DOLNÍ TLAČÍTKA -->
         <StackPanel
                     Orientation="Horizontal"
                     HorizontalAlignment="Left"
