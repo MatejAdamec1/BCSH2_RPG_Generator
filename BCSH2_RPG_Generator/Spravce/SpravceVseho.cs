@@ -27,28 +27,24 @@ namespace BCSH2_RPG_Generator.Spravce
             spravceHer = new SpravceDatLite<Hra>(dbPath, "Hry");
         }
 
-        // Gettery seznamů
         public List<Rasa> GetRasy() => spravceRas.NactiVse();
         public List<Povolani> GetPovolani() => spravcePovolani.NactiVse();
         public List<Schopnost> GetSchopnosti() => spravceSchopnosti.NactiVse();
         public List<Postava> GetPostavy() => spravcePostav.NactiVse();
         public List<Hra> GetHry() => spravceHer.NactiVse();
 
-        // Najdi podle ID
         public Rasa? NajdiRasu(Guid id) => GetRasy().Find(r => r.Id == id);
         public Povolani? NajdiPovolani(Guid id) => GetPovolani().Find(p => p.Id == id);
         public Schopnost? NajdiSchopnost(Guid id) => GetSchopnosti().Find(s => s.Id == id);
         public Postava? NajdiPostavu(Guid id) => GetPostavy().Find(p => p.Id == id);
         public Hra? NajdiHru(Guid id) => GetHry().Find(h => h.Id == id);
 
-        // Najdi podle názvu
         public Rasa? NajdiRasuPodleNazvu(string nazev) => GetRasy().Find(r => r.Nazev == nazev);
         public Povolani? NajdiPovolaniPodleNazvu(string nazev) => GetPovolani().Find(p => p.Nazev == nazev);
         public Schopnost? NajdiSchopnostPodleNazvu(string nazev) => GetSchopnosti().Find(s => s.Nazev == nazev);
         public Postava? NajdiPostavuPodleJmena(string jmeno) => GetPostavy().Find(p => p.Jmeno == jmeno);
         public Hra? NajdiHruPodleNazvu(string nazev) => GetHry().Find(h => h.Nazev == nazev);
 
-        // CRUD operace
         public bool VytvorRasu(string nazev, string popis, string? obrazek = null)
         {
             if (GetRasy().Any(r => r.Nazev.Equals(nazev, StringComparison.OrdinalIgnoreCase)))

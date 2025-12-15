@@ -1,4 +1,4 @@
-﻿<Window x:Class="Generator_RPG.Views.CustomMessageBox"
+﻿<Window x:Class="BCSH2_RPG_Generator.Views.CustomMessageBox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStyle="None"

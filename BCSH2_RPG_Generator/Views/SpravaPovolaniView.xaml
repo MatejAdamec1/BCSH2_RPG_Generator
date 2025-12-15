@@ -106,7 +106,7 @@
                 BorderBrush="#5C3A1E" BorderThickness="3"
                 CornerRadius="8" Margin="31,10,0,0">
             <Border.Background>
-                <ImageBrush ImageSource="/Views/PictureBoxPovolani UnknownbackTemp.png"/>
+                <ImageBrush ImageSource="/Assets/PictureBoxPovolaniUnknownbackTemp.png"/>
             </Border.Background>
             <Image Stretch="UniformToFill"
                    HorizontalAlignment="Stretch"

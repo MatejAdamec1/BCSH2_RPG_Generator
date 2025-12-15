@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Generator_RPG.Views;
+using BCSH2_RPG_Generator.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
@@ -78,8 +78,8 @@ namespace BCSH2_RPG_Generator.ViewModels
         {
             if (VybranaPostava == null) return;
 
-            var view = new BCSH2_RPG_Generator.Views.PridejPostavuView();
-            view.DataContext = new BCSH2_RPG_Generator.ViewModels.PridejPostavuViewModel(spravce, hraId, VybranaPostava.Id);
+            var view = new PridejPostavuView();
+            view.DataContext = new PridejPostavuViewModel(spravce, hraId, VybranaPostava.Id);
             view.ShowDialog();
             FiltrovatPostavy();
         }

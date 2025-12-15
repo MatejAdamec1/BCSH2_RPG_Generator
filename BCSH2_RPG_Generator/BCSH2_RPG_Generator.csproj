@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\PictureBox UnknownbackTemp.png" />
+    <None Remove="Assets\PictureBoxPovolani UnknownbackTemp.png" />
+    <None Remove="Assets\PictureBoxPovolaniUnknownbackTemp.png" />
+    <None Remove="Assets\PictureBoxRasaUnknownbackTemp.png" />
+    <None Remove="Assets\PictureBoxSchopnostUnknownbackTemp.png" />
+    <None Remove="Assets\PictureBoxUnknownbackTemp.png" />
     <None Remove="Views\PictureBox backTemp.png" />
     <None Remove="Views\PictureBoxPovolani UnknownbackTemp.png" />
     <None Remove="Views\PictureBoxRasa UnknownbackTemp.png" />
@@ -24,11 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Views\PictureBox backTemp.png" />
-    <Resource Include="Views\PictureBoxPovolani UnknownbackTemp.png" />
-    <Resource Include="Views\PictureBoxRasaUnknownbackTemp.png" />
-    <Resource Include="Views\PictureBoxSchopnostUnknownbackTemp.png" />
-    <Resource Include="Views\pozadi.png" />
+    <Resource Include="Assets\PictureBoxPovolaniUnknownbackTemp.png" />
+    <Resource Include="Assets\PictureBoxRasaUnknownbackTemp.png" />
+    <Resource Include="Assets\PictureBoxSchopnostUnknownbackTemp.png" />
+    <Resource Include="Assets\PictureBoxUnknownbackTemp.png" />
   </ItemGroup>
 
 </Project>

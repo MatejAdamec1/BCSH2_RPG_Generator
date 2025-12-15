@@ -41,7 +41,6 @@ namespace BCSH2_RPG_Generator.Spravce
             var itemsToDelete = col.FindAll().Where(predicate).ToList();
             foreach (var item in itemsToDelete)
             {
-                // najdi Id property v itemu
                 var idProp = typeof(T).GetProperty("Id");
                 if (idProp != null)
                 {

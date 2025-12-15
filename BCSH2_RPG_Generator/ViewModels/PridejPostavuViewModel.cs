@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Controls;
-using Generator_RPG.Views;
+using BCSH2_RPG_Generator.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {
@@ -63,8 +63,6 @@ namespace BCSH2_RPG_Generator.ViewModels
                 new StatItem("Charisma", 10)
             });
 
-            ObrazekCesta = "C:\\Users\\matej\\source\\repos\\Generator_RPG\\Generator_RPG\\Assets\\PictureBox UnknownbackTemp.png";
-
             if (upravovanaId.HasValue)
                 NactiData();
         }
@@ -77,7 +75,6 @@ namespace BCSH2_RPG_Generator.ViewModels
         [RelayCommand]
         private void Ulozit()
         {
-            ObrazekCesta = string.IsNullOrWhiteSpace(ObrazekCesta) ? "C:\\Users\\matej\\source\\repos\\Generator_RPG\\Generator_RPG\\Assets\\PictureBox UnknownbackTemp.png" : ObrazekCesta;
             if (string.IsNullOrWhiteSpace(Jmeno) || VybranaRasa == null || VybranePovolani == null)
             {
                 CustomMessageBox.Show("Vyplň všechna pole!", "Chyba", CustomMessageBoxButtons.OK);

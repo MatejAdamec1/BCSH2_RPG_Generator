@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Generator_RPG.Views;
+using BCSH2_RPG_Generator.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media.Imaging;
 using System.Windows;
 
-namespace Generator_RPG.Views
+namespace BCSH2_RPG_Generator.Views
 {
     public enum CustomMessageBoxButtons
     {

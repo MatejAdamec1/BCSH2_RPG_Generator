@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Generator_RPG.Views;
 
 namespace BCSH2_RPG_Generator.ViewModels
 {

@@ -82,6 +82,9 @@
                         BorderBrush="#5C3A1E" BorderThickness="3"
                         CornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Top"
                         Width="200" Height="200" Margin="0,-45,0,0">
+                    <Border.Background>
+                        <ImageBrush ImageSource="/Assets/PictureBoxUnknownbackTemp.png"/>
+                    </Border.Background>
                     <Image Source="{Binding VybranaPostava.Obrazek}" Stretch="UniformToFill"/>
                 </Border>
 
@@ -131,7 +134,7 @@
             <Button Content="Smazat postavu" Width="131" Margin="10,0,0,0"
                     Command="{Binding SmazatCommand}"/>
 
-            <Button Content="Zpět" Width="100" Margin="162,0,0,0"
+            <Button Content="Hlavní menu" Width="100" Margin="162,0,0,0"
                     Command="{Binding ZpetCommand}"/>
         </StackPanel>
     </Grid>
