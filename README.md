@@ -36,12 +36,12 @@ Data jsou ukládána do embedded databáze **LiteDB**.
 ## Návod pro použití aplikace
 
 ### Správa Povolání/Schopností/Ras
-- Stisknutím tlačítka *Správa Povolání/Schopností/Ras* z hlavního menu se otevře okno pro správu dané **entity**.
+- Stisknutím tlačítka *Povolání/Schopnosti/Rasy* z hlavního menu se otevře okno pro správu dané **entity**.
 
 ![Správa ras](docs/img/sprava_ras.png)
 - Tyto entity představují vlastnosti, které je možné následně přiřadit jednotlivým postavám.
 - Pro vytvoření nového záznamu, stiskněte **Nové/á**. Textboxy se vyčistí a aplikace se přepne do režimu přidání. Po vyplnění pole pro **Název** lze volitelně přidat i **Popis** a **Obrázek** (ve *správě Schopností* existuje ještě volitelné pole *Typ Schopnosti*). Aby se přidání potvrdilo, stiskněte **Přidat**, pokud chcete režim přidání opustit bez uložení, stiskněte **Zrušit**.
-- Pro úpravu existujícího záznamu, stačí daný záznam zvolit v horním seznamu a do polí se **automaticky vyplní** údaje, které lze upravovat. Pro uložení změn stiskněte **Uložit**.
+- Pro úpravu existujícího záznamu, stačí daný záznam zvolit v horním seznamu a do polí se **automaticky vyplní** údaje, které lze upravovat. Pro uložení změn v daném záznamu stiskněte **Uložit**.
 - Pro odstranění záznamu z databáze vyberte záznam pro smazání z horního seznamu a stiskněte **Smazat**. Otevře se dialog pro smazání.
 
 ---
@@ -86,7 +86,7 @@ Data jsou ukládána do embedded databáze **LiteDB**.
 
 ---
 
-## 👨‍🎓 Autor
+## Autor
 
 **Matěj Adamec**  
 BCSH2 – semestrální práce  
