@@ -18,10 +18,10 @@ Data jsou ukládána do embedded databáze **LiteDB**.
 ## Struktura projektu
 
 - **Assets** - assety pro aplikaci, obrázky
-- **Data** – entity aplikace, modely (Postava, Rasa, ...)
+- **Data** – entity aplikace, modely (`Postava`, `Rasa`, ...)
 - **Spravce** – správci dat, virtuální reprezentace dat v databázi
-- **ViewModels** – logika aplikace, viewmodely (SpravaRasViewModel, ...)
-- **Views** – UI, views (SpravaRasView, ...)
+- **ViewModels** – logika aplikace, viewmodely (`SpravaRasViewModel`, ...)
+- **Views** – UI, views (`SpravaRasView`, ...)
 
 ---
 
