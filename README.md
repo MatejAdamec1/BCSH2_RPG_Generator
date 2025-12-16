@@ -25,6 +25,15 @@ Data jsou ukládána do embedded databáze **LiteDB**.
 
 ---
 
+## Architektura a návrh
+
+- Aplikace je postavena na architektuře **MVVM**
+- Přístup k databázi je zapouzdřen do generických správců (`SpravceDatLite<T>`)
+- Identifikace entit je řešena pomocí `Guid`
+- Projekt je navržen s ohledem na další rozšiřitelnost (např. přidání dalších vlastností, sledování HP postav v průběhu hry, ...)
+
+---
+
 ## Spuštění aplikace
 
 1. Otevřít projekt ve **Visual Studio**

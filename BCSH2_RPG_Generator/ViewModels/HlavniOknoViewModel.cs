@@ -67,8 +67,8 @@ namespace BCSH2_RPG_Generator.ViewModels
         [RelayCommand]
         private void Pridat()
         {
-            var view = new BCSH2_RPG_Generator.Views.PridejPostavuView();
-            view.DataContext = new BCSH2_RPG_Generator.ViewModels.PridejPostavuViewModel(spravce, hraId);
+            var view = new PridejPostavuView();
+            view.DataContext = new PridejPostavuViewModel(spravce, hraId);
             view.ShowDialog();
             FiltrovatPostavy();
         }
@@ -112,7 +112,7 @@ namespace BCSH2_RPG_Generator.ViewModels
                 .OfType<Window>()
                 .FirstOrDefault(w => w.DataContext == this);
 
-            var okno = new BCSH2_RPG_Generator.Views.MainMenuView();
+            var okno = new MainMenuView();
             currentWindow?.Close();
             okno.Show();
         }
